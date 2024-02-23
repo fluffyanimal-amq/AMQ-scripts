@@ -8,6 +8,7 @@
 // @require      https://github.com/amq-script-project/AMQ-Scripts/raw/master/gameplay/simpleLogger.js
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
 // @downloadURL  https://github.com/fluffyanimal-amq/AMQ-scripts/raw/main/amqSongArtistMode.user.js
+// @updateURL    https://github.com/fluffyanimal-amq/AMQ-scripts/raw/main/amqSongArtistMode.user.js
 // ==/UserScript==
 
 // I'm just attempting to fix some bugs mainly involving the lists of titles and artists and how answers are checked.
