@@ -7,6 +7,7 @@
 // @match        https://animemusicquiz.com/*
 // @require      https://github.com/joske2865/AMQ-Scripts/raw/master/common/amqScriptInfo.js
 // @require      https://github.com/Minigamer42/scripts/raw/master/lib/commands.js
+// @downloadURL  https://github.com/fluffyanimal-amq/AMQ-scripts/raw/main/amqSongHistoryLocalstorage.user.js
 // ==/UserScript==
 
 const infoDiv = document.createElement('div');
