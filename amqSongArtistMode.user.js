@@ -12,15 +12,8 @@
 // @updateURL    https://github.com/fluffyanimal-amq/AMQ-scripts/raw/main/amqSongArtistMode.user.js
 // ==/UserScript==
 
-// I'm just attempting to fix some bugs mainly involving the lists of titles and artists and how answers are checked.
-
 /* Limits how many songs can be rendered when you type a keyword. Larger number means more lag and requires more computing power. */
 let dropdownListLimit = 50
-
-/*
-Scoring Mode:
-false - artist must be exactly as AMQ shows. That means with all the featuring artists etc.
-*/
 
 let enableBinary = true,
     scoreboardReady = false,
@@ -35,7 +28,7 @@ let enableBinary = true,
 
 let artists = [];
 let titles = [];
-let exceptionsList = [];
+// get all artists + titles from localstorage database
 const songs = JSON.parse(localStorage.songHistory);
 for (const url in songs) {
     let artist = songs[url]['artist'];
@@ -47,6 +40,7 @@ for (const url in songs) {
         titles.push(title);
     }
 }
+// sort so dropdown is shortest to longest
 artists.sort((strA, strB) => strA.length - strB.length);
 titles.sort((strA, strB) => strA.length - strB.length);
 
@@ -71,7 +65,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-//This is a proxy to do a cross-origin API request to (4Lajf's) site
+//This is a proxy to do a cross-origin API request to (presumably 4Lajf's) site
 let cors_api_url = 'https://amq-proxy.herokuapp.com/';
 async function doCORSRequest(options) {
     if (enableBinary === false) {
@@ -1071,7 +1065,7 @@ function setup() {
         name: "AMQ Song Artist Mode",
         author: "fluffyanimal (cloned from 4Lajf)",
         version: "1.0",
-        description: "Makes you able to play song/artist with other people who have this script installed. Includes dropdown and scoretable."
+        description: "Lets you play S/A with other people who have this script installed. Dropdown requires fluffyanimal's localstorage song history script."
     });
 
     // CSS stuff
