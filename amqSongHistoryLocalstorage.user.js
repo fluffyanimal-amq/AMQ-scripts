@@ -5,6 +5,7 @@
 // @description  Display Song history in the song info box, including the guess rate and time since last time the song played.
 // @author       fluffyanimal (cloned from Minigamer42)
 // @match        https://animemusicquiz.com/*
+// @grant        none
 // @require      https://github.com/joske2865/AMQ-Scripts/raw/master/common/amqScriptInfo.js
 // @require      https://github.com/Minigamer42/scripts/raw/master/lib/commands.js
 // @downloadURL  https://github.com/fluffyanimal-amq/AMQ-scripts/raw/main/amqSongHistoryLocalstorage.user.js
