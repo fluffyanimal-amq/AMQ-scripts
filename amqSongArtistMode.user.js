@@ -5,6 +5,7 @@
 // @description  Makes you able to play song/artist with other people who have this script installed. Includes dropdown and scoretable.
 // @author       fluffyanimal (cloned from 4Lajf)
 // @match        https://animemusicquiz.com/*
+// @grant        none
 // @require      https://github.com/amq-script-project/AMQ-Scripts/raw/master/gameplay/simpleLogger.js
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
 // @downloadURL  https://github.com/fluffyanimal-amq/AMQ-scripts/raw/main/amqSongArtistMode.user.js
