@@ -93,7 +93,7 @@ function setup() {
         }
 
         const songHistory = JSON.parse(localStorage.getItem('songHistory'));
-        const current = songHistory[webm] ?? {count: 0, correctCount: 0.0, lastPlayed: 0, tracking: '', animeName: '', songName: '', artist: '', difficulty: 0, songEntry: ''};
+        const current = songHistory[webm] ?? {count: 0, correctCount: 0.0, lastPlayed: 0, tracking: '', animeName: '', songName: '', artist: '', difficulty: 0, songEntry: '', annId: ''};
         if (quiz.isSpectator) {} else {
             current.count++;
             let isCorrect;
@@ -127,6 +127,7 @@ function setup() {
             songType += ' ' + data.songInfo.typeNumber;
         }
         let entry = data.songInfo.animeNames.english + ' ' + songType;
+        let annId = data.songInfo.siteIds.annId;
 
         localStorage.setItem('songHistory', JSON.stringify({
             ...songHistory,
@@ -140,6 +141,7 @@ function setup() {
                 artist: artist,
                 difficulty: difficulty,
                 songEntry: entry,
+                annId: annId,
             }
         }));
 
@@ -186,7 +188,7 @@ function setup() {
 
     AMQ_addScriptData({
         name: "Song History",
-        author: "fluffyanimal",
+        author: "fluffyanimal (cloned from Minigamer42)",
         description: `<p>-- Browser Mode --<p>
         <p>Display the number of time a song played before and your guess rate on it in the song info window</p>`
     });
