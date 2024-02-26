@@ -12,6 +12,12 @@
 // @updateURL    https://github.com/fluffyanimal-amq/AMQ-scripts/raw/main/amqSongArtistMode.user.js
 // ==/UserScript==
 
+AMQ_addScriptData({
+    name: "Song/Artist Mode",
+    author: "fluffyanimal (cloned from 4Lajf)",
+    description: "Lets you play S/A with other people who have this script installed. S/A dropdown requires fluffyanimal's localstorage song history script."
+});
+
 /* Limits how many songs can be rendered when you type a keyword. Larger number means more lag and requires more computing power. */
 let dropdownListLimit = 50
 
@@ -179,7 +185,7 @@ async function changeMode(e) {
 
 // Initial setup on quiz start
 quizReadyRigTracker = new Listener("quiz ready", async (data) => {
-    gameChat.systemMessage('Press [Alt+H] to toggle S/A mode')
+    //gameChat.systemMessage('Press [Alt+H] to toggle S/A mode')
     document.addEventListener('keydown', changeMode)
     if (enableBinary === false) {
         return;
@@ -1061,42 +1067,34 @@ if (enableBinary === true) {
 }
 
 function setup() {
-    AMQ_addScriptData({
-        name: "AMQ Song Artist Mode",
-        author: "fluffyanimal (cloned from 4Lajf)",
-        version: "1.0",
-        description: "Lets you play S/A with other people who have this script installed. Dropdown requires fluffyanimal's localstorage song history script."
-    });
-
-    // CSS stuff
     AMQ_addStyle(`
-            .qpsPlayerRig {
-                padding-right: 5px;
-                opacity: 0.3;
-            }
-            .customCheckboxContainer {
-                display: flex;
-            }
-            .customCheckboxContainer > div {
-                display: inline-block;
-                margin: 5px 0px;
-            }
-            .customCheckboxContainer > .customCheckboxContainerLabel {
-                margin-left: 5px;
-                margin-top: 5px;
-                font-weight: normal;
-            }
-            .offset1 {
-                margin-left: 20px;
-            }
-            .offset2 {
-                margin-left: 40px;
-            }
-            .offset3 {
-                margin-left: 60px;
-            }
-            .offset4 {
-                margin-left: 80px;
-            }
-        `);
+        .qpsPlayerRig {
+            padding-right: 5px;
+            opacity: 0.3;
+        }
+        .customCheckboxContainer {
+            display: flex;
+        }
+        .customCheckboxContainer > div {
+            display: inline-block;
+            margin: 5px 0px;
+        }
+        .customCheckboxContainer > .customCheckboxContainerLabel {
+            margin-left: 5px;
+            margin-top: 5px;
+            font-weight: normal;
+        }
+        .offset1 {
+            margin-left: 20px;
+        }
+        .offset2 {
+            margin-left: 40px;
+        }
+        .offset3 {
+            margin-left: 60px;
+        }
+        .offset4 {
+            margin-left: 80px;
+        }
+    `);
 }
