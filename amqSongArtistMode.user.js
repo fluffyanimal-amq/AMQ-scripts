@@ -12,43 +12,69 @@
 // @updateURL    https://github.com/fluffyanimal-amq/AMQ-scripts/raw/main/amqSongArtistMode.user.js
 // ==/UserScript==
 
-AMQ_addScriptData({
-    name: "Song/Artist Mode",
-    author: "fluffyanimal (cloned from 4Lajf)",
-    description: "Lets you play S/A with other people who have this script installed. S/A dropdown requires fluffyanimal's localstorage song history script."
-});
+if (document.getElementById('startPage')) {
+    return;
+}
+
+// Wait until the LOADING... screen is hidden to setup script
+let loadInterval = setInterval(() => {
+    if (document.getElementById("loadingScreen").classList.contains("hidden")) {
+        setup();
+        clearInterval(loadInterval);
+    }
+}, 500);
+
+function setup() {
+    AMQ_addScriptData({
+        name: "Song/Artist Mode",
+        author: "fluffyanimal (cloned from 4Lajf)",
+        description: "Lets you play S/A with other people who have this script installed. S/A dropdown requires fluffyanimal's localstorage song history script."
+    });
+    AMQ_addStyle(`
+        .qpsPlayerRig {
+            padding-right: 5px;
+            opacity: 0.3;
+        }
+        .customCheckboxContainer {
+            display: flex;
+        }
+        .customCheckboxContainer > div {
+            display: inline-block;
+            margin: 5px 0px;
+        }
+        .customCheckboxContainer > .customCheckboxContainerLabel {
+            margin-left: 5px;
+            margin-top: 5px;
+            font-weight: normal;
+        }
+        .offset1 {
+            margin-left: 20px;
+        }
+        .offset2 {
+            margin-left: 40px;
+        }
+        .offset3 {
+            margin-left: 60px;
+        }
+        .offset4 {
+            margin-left: 80px;
+        }
+    `);
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /* Limits how many songs can be rendered when you type a keyword. Larger number means more lag and requires more computing power. */
 let dropdownListLimit = 50
 
 let enableBinary = true,
-    scoreboardReady = false,
     playerDataReady = false,
-    returningToLobby = false,
     playerData = {},
     playerAmount = 0,
-    titlesInit = false,
-    artistsInit = false,
     titleValue,
     artistValue;
-
-let artists = [];
-let titles = [];
-// get all artists + titles from localstorage database
-const songs = JSON.parse(localStorage.songHistory);
-for (const url in songs) {
-    let artist = songs[url]['artist'];
-    let title = songs[url]['songName'];
-    if (!artists.includes(artist)) {
-        artists.push(artist);
-    }
-    if (!titles.includes(title)) {
-        titles.push(title);
-    }
-}
-// sort so dropdown is shortest to longest
-artists.sort((strA, strB) => strA.length - strB.length);
-titles.sort((strA, strB) => strA.length - strB.length);
 
 // listeners
 let quizReadyRigTracker,
@@ -57,19 +83,23 @@ let quizReadyRigTracker,
     spectateLobbyListener,
     quizEndTracker;
 
-if (document.getElementById('startPage')) return;
-
-// Wait until the LOADING... screen is hidden and load script
-let loadInterval = setInterval(() => {
-    if (document.getElementById("loadingScreen").classList.contains("hidden")) {
-        setup();
-        clearInterval(loadInterval);
+let artists = [];
+let titles = [];
+// get all distinct artists + titles from localstorage database
+const songs = JSON.parse(localStorage.songHistory);
+for (const url in songs) {
+    let artist = songs[url].artist;
+    let title = songs[url].songName;
+    if (!artists.includes(artist)) {
+        artists.push(artist);
     }
-}, 500);
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    if (!titles.includes(title)) {
+        titles.push(title);
+    }
 }
+// sorting so dropdown is shortest to longest
+artists.sort((strA, strB) => strA.length - strB.length);
+titles.sort((strA, strB) => strA.length - strB.length);
 
 //This is a proxy to do a cross-origin API request to (presumably 4Lajf's) site
 let cors_api_url = 'https://amq-proxy.herokuapp.com/';
@@ -77,58 +107,50 @@ async function doCORSRequest(options) {
     if (enableBinary === false) {
         return;
     }
-
     let x = new XMLHttpRequest();
     x.open(options.method, cors_api_url + options.url);
     x.onload = x.onerror = function () {
-
         if (options.type === 'titles') {
-            titles = x.responseText
-            titles = JSON.parse(titles)
-            titles = titles.body
-            titlesInit = true
+            titles = x.responseText;
+            titles = JSON.parse(titles);
+            titles = titles.body;
         }
-
         if (options.type === 'artists') {
-            artists = x.responseText
-            artists = JSON.parse(artists)
-            artists = artists.body
-            artistsInit = true
+            artists = x.responseText;
+            artists = JSON.parse(artists);
+            artists = artists.body;
         }
     };
     x.send(options.data);
 }
 
-// Writes the current rig to scoreboard
-function writeRigToScoreboard() {
-    if (enableBinary === false) {
-        return;
-    }
-    if (playerDataReady) {
-        for (let entryId in quiz.scoreboard.playerEntries) {
-            let entry = quiz.scoreboard.playerEntries[entryId];
-            let guessedCounter = entry.$entry.find(".qpsPlayerRig");
-            let new_text = playerData[entryId].score_song + "," + playerData[entryId].score_artist;
-            guessedCounter.text(new_text);
-            //quiz.scoreboard.playerEntries[entryId].$score[0].textContent = playerData[entryId].rig
+//Alt+H to toggle S/A
+async function changeMode(e) {
+    if (e.altKey && e.key == 'h') {
+        enableBinary = !enableBinary;
+        gameChat.systemMessage(enableBinary ? "Song/Artist plugin has been ENABLED" : "Song/Artist plugin has been DISABLED");
+        if (enableBinary === false) {
+            let songArtistDOMElement = document.querySelector('#songartist');
+            songArtistDOMElement.style.display = 'none';
+            let playerScores = document.querySelectorAll('.qpsPlayerRig');
+            for (let i = 0; i < playerScores.length; i++) {
+                playerScores[i].style.display = 'none';
+            }
+        }
+        if (enableBinary === true) {
+            let songArtistDOMElement = document.querySelector('#songartist');
+            songArtistDOMElement.style.display = 'block';
+            let playerScores = document.querySelectorAll('.qpsPlayerRig');
+            for (let i = 0; i < playerScores.length; i++) {
+                playerScores[i].style.display = 'inline-block';
+            }
         }
     }
 }
 
-// Clears player data
-function clearPlayerData() {
-    if (enableBinary === false) {
-        return;
-    }
-    playerData = {};
-    playerDataReady = false;
-}
-
-function initialisePlayerData() {
-    if (enableBinary === false) {
-        return;
-    }
-    clearPlayerData();
+// sets all player S/A scores to 0,0
+function initPlayerData() {
+    playerData = {}; // clearPlayerData()
     for (let entryId in quiz.players) {
         playerData[entryId] = {
             score_song: 0,
@@ -139,68 +161,104 @@ function initialisePlayerData() {
     playerDataReady = true;
 }
 
-// Clears the rig counters from scoreboard
-function clearScoreboard() {
-    if (enableBinary === false) {
-        return;
-    }
-    $(".qpsPlayerRig").remove();
-    scoreboardReady = false;
-}
 
-// Creates the rig counters on the scoreboard and sets them to 0
-function initialiseScoreboard() {
-    if (enableBinary === false) {
-        return;
-    }
-    clearScoreboard();
+
+// adds S/A scores of 0,0 to scoreboard
+function initScoreboard() {
+    $(".qpsPlayerRig").remove(); // clearScoreboard()
     for (let entryId in quiz.scoreboard.playerEntries) {
         let tmp = quiz.scoreboard.playerEntries[entryId];
         let rig = $(`<span class="qpsPlayerRig">0,0</span>`);
         tmp.$entry.find(".qpsPlayerName").before(rig);
     }
-    scoreboardReady = true;
-}
-
-//Alt+H to toggle S/A
-async function changeMode(e) {
-    if (e.altKey && e.key == 'h') {
-        enableBinary = !enableBinary;
-
-        gameChat.systemMessage(enableBinary ? "Song/Artist plugin has been ENABLED" : "Song/Artist plugin has been DISABLED");
-        if (enableBinary === false) {
-            let songArtistDOMElement = document.querySelector('#songartist');
-            songArtistDOMElement.style.display = 'none';
-            let playerScore = document.querySelector('.qpsPlayerRig');
-            playerScore.style.display = 'none';
+    let playerScores = document.querySelectorAll('.qpsPlayerRig');
+    if (enableBinary === false) {
+        for (let i = 0; i < playerScores.length; i++) {
+            playerScores[i].style.display = 'none';
         }
-        if (enableBinary === true) {
-            let songArtistDOMElement = document.querySelector('#songartist');
-            songArtistDOMElement.style.display = 'block';
-            let playerScore = document.querySelector('.qpsPlayerRig');
-            playerScore.style.display = 'inline-block';
+    } else {
+        for (let i = 0; i < playerScores.length; i++) {
+            playerScores[i].style.display = 'inline-block';
         }
     }
 }
 
 // Initial setup on quiz start
 quizReadyRigTracker = new Listener("quiz ready", async (data) => {
-    //gameChat.systemMessage('Press [Alt+H] to toggle S/A mode')
-    document.addEventListener('keydown', changeMode)
+    //gameChat.systemMessage('S/A toggle enabled: [ALT+H]');
+    document.addEventListener('keydown', changeMode);
+    playerAmount = Object.entries(quiz.players).length;
+    initPlayerData();
+    initScoreboard();
     if (enableBinary === false) {
         return;
     }
-    //Fetches title and artist list from an API
-    playerAmount = Object.entries(quiz.players).length
-    returningToLobby = false;
-    clearPlayerData();
-    clearScoreboard();
     answerResultsRigTracker.bindListener();
-    initialiseScoreboard();
-    initialisePlayerData();
 
-    await sleep(2000)
+    await sleep(2000);
 })
+
+// writes current S/A scores to scoreboard
+function writeRigToScoreboard() {
+    if (enableBinary === false) {
+        return;
+    }
+    if (playerDataReady) {
+        for (let entryId in quiz.scoreboard.playerEntries) {
+            let entry = quiz.scoreboard.playerEntries[entryId];
+            let guessedCounter = entry.$entry.find(".qpsPlayerRig");
+            let playerScore = playerData[entryId].score_song + "," + playerData[entryId].score_artist;
+            guessedCounter.text(playerScore);
+            //quiz.scoreboard.playerEntries[entryId].$score[0].textContent = playerData[entryId].rig
+        }
+    }
+}
+
+// listener for answer reveal, only writes to scoreboard right now
+answerResultsRigTracker = new Listener("answer results", async (result) => {
+    if (enableBinary === false) {
+        return;
+    }
+    for (let player of result.players) {
+        if (player.correct === true) {
+            //playerData[player.gamePlayerId].score++;
+        }
+    }
+    await sleep(100);
+    //console.log(playerData[0]);
+    writeRigToScoreboard();
+})
+
+// Remove Alt+H listener on the end of the game
+quizEndTracker = new Listener("quiz end result", (result) => {
+    if (enableBinary === false) {
+        return;
+    }
+    //gameChat.systemMessage('S/A toggle disabled');
+    document.removeEventListener('keydown', changeMode);
+    writeRigToScoreboard();
+})
+
+quizReadyRigTracker.bindListener();
+answerResultsRigTracker.bindListener();
+quizEndTracker.bindListener();
+
+// Clears player data
+function clearPlayerData() {
+    if (enableBinary === false) {
+        return;
+    }
+    playerData = {};
+    playerDataReady = false;
+}
+
+// clears S/A scores from scoreboard
+function clearScoreboard() {
+    if (enableBinary === false) {
+        return;
+    }
+    $(".qpsPlayerRig").remove();
+}
 
 // Reset data when joining a lobby
 joinLobbyListener = new Listener("Join Game", async (payload) => {
@@ -217,21 +275,6 @@ joinLobbyListener = new Listener("Join Game", async (payload) => {
     }
 })
 
-// stuff to do on answer reveal
-answerResultsRigTracker = new Listener("answer results", async (result) => {
-    if (enableBinary === false) {
-        return;
-    }
-    for (let player of result.players) {
-        if (player.correct === true) {
-            //playerData[player.gamePlayerId].score++;
-        }
-    }
-    await sleep(100)
-    //console.log(playerData[0]);
-    writeRigToScoreboard();
-})
-
 // Reset data when spectating a lobby
 spectateLobbyListener = new Listener("Spectate Game", (payload) => {
     if (enableBinary === false) {
@@ -245,20 +288,8 @@ spectateLobbyListener = new Listener("Spectate Game", (payload) => {
     clearScoreboard();
 })
 
-//Remove Alt+G listener on the end of the game
-quizEndTracker = new Listener("quiz end result", (result) => {
-    if (enableBinary === false) {
-        return;
-    }
-    document.removeEventListener('keydown', changeMode)
-    writeRigToScoreboard()
-})
-
-quizReadyRigTracker.bindListener();
-answerResultsRigTracker.bindListener();
 joinLobbyListener.bindListener();
 spectateLobbyListener.bindListener();
-quizEndTracker.bindListener();
 
 class SongArtistMode {
     #signature = 'sa-'
@@ -1064,37 +1095,4 @@ class SongArtistMode {
 
 if (enableBinary === true) {
     window.songArtist = new SongArtistMode()
-}
-
-function setup() {
-    AMQ_addStyle(`
-        .qpsPlayerRig {
-            padding-right: 5px;
-            opacity: 0.3;
-        }
-        .customCheckboxContainer {
-            display: flex;
-        }
-        .customCheckboxContainer > div {
-            display: inline-block;
-            margin: 5px 0px;
-        }
-        .customCheckboxContainer > .customCheckboxContainerLabel {
-            margin-left: 5px;
-            margin-top: 5px;
-            font-weight: normal;
-        }
-        .offset1 {
-            margin-left: 20px;
-        }
-        .offset2 {
-            margin-left: 40px;
-        }
-        .offset3 {
-            margin-left: 60px;
-        }
-        .offset4 {
-            margin-left: 80px;
-        }
-    `);
 }
