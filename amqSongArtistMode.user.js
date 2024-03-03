@@ -591,8 +591,11 @@ class SongArtistMode {
                 songDropdownItems[dropdownFocus].focus()
             }
             if (e.key == 'Enter' && document.activeElement.innerText !== '') {
-                songsInputElement.value = document.activeElement.innerText
-                closeDropdown(songsListElement)
+                songsInputElement.value = document.activeElement.innerText;
+                closeDropdown(songsListElement);
+                if (songArtistsAnswerField.value !== "") {
+                    quiz.answerInput.submitAnswer(true);
+                }
             }
             if (e.key == 'Escape') {
                 closeDropdown(songsListElement)
@@ -694,8 +697,11 @@ class SongArtistMode {
                 artisDropdownItems[dropdownFocus].focus()
             }
             if (e.key == 'Enter' && document.activeElement.innerText !== '') {
-                artistsInputElement.value = document.activeElement.innerText
-                closeDropdown(artistsListElement)
+                artistsInputElement.value = document.activeElement.innerText;
+                closeDropdown(artistsListElement);
+                if (songTitlesAnswerField.value !== "") {
+                    quiz.answerInput.submitAnswer(true);
+                }
             }
             if (e.key == 'Escape') {
                 closeDropdown(artistsListElement)
@@ -713,16 +719,20 @@ class SongArtistMode {
 
         this.#songField = songTitlesAnswerField
         this.#artistField = songArtistsAnswerField
-
         this.#songField.addEventListener("keydown", (event) => {
             if (event.key === "Enter") {
-                this.#submitSong(this.#songField.value)
+                if (this.#artistField.value !== "") {
+                    //this.#submitSong(this.#songField.value);
+                    quiz.answerInput.submitAnswer(true);
+                }
             }
         })
-
         this.#artistField.addEventListener("keydown", (event) => {
             if (event.key === "Enter") {
-                this.#submitArtist(this.#artistField.value)
+                if (this.#songField.value !== "") {
+                    //this.#submitArtist(this.#artistField.value);
+                    quiz.answerInput.submitAnswer(true);
+                }
             }
         })
     }
@@ -1033,11 +1043,11 @@ class SongArtistMode {
         const template = (header, value) => `${this.#answerRevealHeader(header)}${value}`
         if (this.#currentSong !== "") {
             const msg = template(this.#songHeader, this.#currentSong)
-            this.#sendMessage(msg)
+            this.#sendMessage(msg);
         }
         if (this.#currentArtist !== "") {
             const msg = template(this.#artistHeader, this.#currentArtist)
-            this.#sendMessage(msg)
+            this.#sendMessage(msg);
         }
     }
 
