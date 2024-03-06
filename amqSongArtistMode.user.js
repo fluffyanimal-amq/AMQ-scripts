@@ -30,6 +30,15 @@ function setup() {
         author: "fluffyanimal (cloned from 4Lajf)",
         description: "Lets you play S/A with other people who have this script installed. S/A dropdown requires fluffyanimal's localstorage song history script."
     });
+    /* colors that I use in Elodie style script */
+    AMQ_addStyle(`
+        .rightAnswer {
+            color: #00c8ff;
+        }
+        .wrongAnswer {
+            color: #f00;
+        }
+    `);
     AMQ_addStyle(`
         .qpsPlayerRig {
             padding-right: 5px;
@@ -437,7 +446,7 @@ class SongArtistMode {
         }
         $text.text(value)
         if (correct !== undefined) {
-            const classList = $text[0].classList
+            const classList = $text[0].classList;
             if (correct) {
                 classList.add("rightAnswer")
             } else {
@@ -723,6 +732,7 @@ class SongArtistMode {
             if (event.key === "Enter") {
                 if (this.#artistField.value !== "") {
                     //this.#submitSong(this.#songField.value);
+                    closeDropdown(songsListElement);
                     quiz.answerInput.submitAnswer(true);
                 }
             }
@@ -731,6 +741,7 @@ class SongArtistMode {
             if (event.key === "Enter") {
                 if (this.#songField.value !== "") {
                     //this.#submitArtist(this.#artistField.value);
+                    closeDropdown(artistsListElement);
                     quiz.answerInput.submitAnswer(true);
                 }
             }
