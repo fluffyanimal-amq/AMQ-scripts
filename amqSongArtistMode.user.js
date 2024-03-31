@@ -30,15 +30,6 @@ function setup() {
         author: "fluffyanimal (cloned from 4Lajf)",
         description: "Lets you play S/A with other people who have this script installed. S/A dropdown requires fluffyanimal's localstorage song history script."
     });
-    /* colors that I use in Elodie style script */
-    AMQ_addStyle(`
-        .rightAnswer {
-            color: #00c8ff;
-        }
-        .wrongAnswer {
-            color: #f00;
-        }
-    `);
     AMQ_addStyle(`
         .qpsPlayerRig {
             padding-right: 5px;
