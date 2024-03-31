@@ -161,7 +161,7 @@ function setup() {
      * @param limit {string}
      * @param start {string}
      */
-    function displaySongHistory(limit = '10', start = '1') {
+    function displaySongHistory(limit = '20', start = '1') {
         const songsPlayed = [];
         const songs = JSON.parse(localStorage.songHistory);
 
@@ -196,6 +196,6 @@ function setup() {
     AMQ_addCommand({
         command: 'songhistory',
         callback: displaySongHistory,
-        description: 'Display song history ordered by count descending. Parameters default to 10 and 1'
+        description: 'Display song history ordered by count descending. Parameters default to 20 and 1'
     });
 }
