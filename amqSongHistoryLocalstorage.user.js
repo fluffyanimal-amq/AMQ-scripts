@@ -157,6 +157,12 @@ function setup() {
     };
     l.bindListener();
 
+    const l2 = new Listener("play next song");
+    l2.callback = async () => {
+        infoDiv.innerHTML = ''; // resets infoDiv from previous song (so it doesn't get displayed if you use a hint on current song)
+    }
+    l2.bindListener();
+
     /**
      * @param limit {string}
      * @param start {string}
@@ -188,9 +194,11 @@ function setup() {
 
     AMQ_addScriptData({
         name: "Song History",
-        author: "fluffyanimal (cloned from Minigamer42)",
-        description: `<p>-- Browser Mode --<p>
-        <p>Display the number of time a song played before and your guess rate on it in the song info window</p>`
+        author: "fluffyanimal",
+        version: "1.0",
+        link: "https://github.com/fluffyanimal-amq/AMQ-scripts/raw/main/amqSongHistoryLocalstorage.user.js",
+        description: `<p>-- Browser Mode (cloned from Minigamer42's script) --<p>
+        <p>Displays a song's total plays and guess rate in the song info window. It also tracks the accuracy of the last 8 guesses for each song.</p>`
     });
 
     AMQ_addCommand({
