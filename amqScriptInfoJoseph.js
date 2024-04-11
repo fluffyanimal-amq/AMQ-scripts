@@ -79,8 +79,6 @@ metadataObj = {
 */
 function AMQ_addScriptData(metadata) {
     AMQ_createInstalledWindow();
-    console.log("window installed");
-    console.log(metadata);
     let $row = $(`<div class="installedScriptItem"></div>`)
         .append($("<h4></h4>")
             .append($(`<i class="fa fa-caret-right"></i>`))
@@ -106,7 +104,6 @@ function AMQ_addScriptData(metadata) {
             .html(metadata.description || "No description provided")
             .hide()
         );
-    console.log($row);
     let $items = $("#installedListContainer .installedScriptItem");
     let title = `${metadata.name} by ${metadata.author} ${metadata.version}`;
     let index = 0;
