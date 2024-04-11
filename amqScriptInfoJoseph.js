@@ -79,7 +79,7 @@ metadataObj = {
 */
 function AMQ_addScriptData(metadata) {
     AMQ_createInstalledWindow();
-    console.log("window installed");
+    console.log("window installed", metadata);
     let $row = $(`<div class="installedScriptItem"></div>`)
         .append($("<h4></h4>")
             .append($(`<i class="fa fa-caret-right"></i>`))
