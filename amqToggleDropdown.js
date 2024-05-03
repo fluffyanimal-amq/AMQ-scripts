@@ -7,6 +7,8 @@
 // @match        https://animemusicquiz.com/*
 // @grant        none
 // @require      https://github.com/joske2865/AMQ-Scripts/raw/master/common/amqScriptInfo.js
+// @downloadURL  https://github.com/fluffyanimal-amq/AMQ-scripts/raw/main/amqToggleDropdown.user.js
+// @updateURL    https://github.com/fluffyanimal-amq/AMQ-scripts/raw/main/amqToggleDropdown.user.js
 // ==/UserScript==
 
 if (!window.AutoCompleteController) return;
@@ -41,6 +43,7 @@ AMQ_addScriptData({
     name: "AMQ Toggle Dropdown",
     author: "fluffyanimal",
     version: version,
+    link: "https://github.com/fluffyanimal-amq/AMQ-scripts/raw/main/amqToggleDropdown.user.js",
     description: `
         <p>Disables dropdown so you miss every Prisma☆Illya entry. Press [Ctrl + B] to toggle.</p>
     `
